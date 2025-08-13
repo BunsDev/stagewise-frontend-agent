@@ -4,15 +4,13 @@ import posthog from 'posthog-js';
 import { PostHogProvider as PHProvider, usePostHog } from 'posthog-js/react';
 import { Suspense, useEffect } from 'react';
 import { usePathname, useSearchParams } from 'next/navigation';
-
-const CONSENT_KEY = 'posthog-consent';
+import { getCookieConsent } from '@/lib/cookie-consent-utils';
 
 export function PostHogProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (!process.env.NEXT_PUBLIC_POSTHOG_KEY) return;
-
     // Check for user consent
-    const consent = localStorage.getItem(CONSENT_KEY);
+    const consent = getCookieConsent();
 
     // Only initialize PostHog if consent is given
     if (consent === 'accepted') {
@@ -30,7 +28,6 @@ export function PostHogProvider({ children }: { children: React.ReactNode }) {
         posthog.opt_out_capturing();
       }
     }
-    // If consent is null (not yet decided), don't initialize PostHog at all
   }, []);
 
   return (
