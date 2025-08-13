@@ -9,29 +9,28 @@ import {
   CardTitle,
 } from '@stagewise/ui/components/card';
 import { Button } from '@stagewise/ui/components/button';
-
-const CONSENT_KEY = 'posthog-consent';
+import { getCookieConsent, setCookieConsent } from '@/lib/cookie-consent-utils';
 
 export function CookieBanner() {
   const [showBanner, setShowBanner] = useState(false);
 
   useEffect(() => {
     // Check if user has already made a choice
-    const consent = localStorage.getItem(CONSENT_KEY);
+    const consent = getCookieConsent();
     if (consent === null) {
       setShowBanner(true);
     }
   }, []);
 
   const handleAccept = () => {
-    localStorage.setItem(CONSENT_KEY, 'accepted');
+    setCookieConsent('accepted');
     setShowBanner(false);
     // Reload the page to reinitialize PostHog with cookies
     window.location.reload();
   };
 
   const handleDeny = () => {
-    localStorage.setItem(CONSENT_KEY, 'denied');
+    setCookieConsent('denied');
     setShowBanner(false);
   };
 
@@ -40,7 +39,7 @@ export function CookieBanner() {
   }
 
   return (
-    <div className="slide-in-from-bottom fixed right-4 bottom-4 z-50 w-sm animate-in rounded-xl bg-fd-background/80 backdrop-blur-lg duration-300">
+    <div className="slide-in-from-bottom fixed right-4 bottom-4 z-50 w-sm animate-in rounded-xl bg-white/80 backdrop-blur-lg duration-300">
       <Card className="shadow-lg">
         <CardHeader className="pb-3">
           <CardTitle className="text-base">Cookie Consent</CardTitle>
